@@ -12,8 +12,6 @@
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.0",
     "rollup": "^1.12.0",
-    "rollup-plugin-bundle-html": "^0.2.1",
-    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-execute": "^1.1.1",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.0.3",

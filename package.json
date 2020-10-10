@@ -1,7 +1,7 @@
 {
-  "name": "fernando.works",
-  "version": "2.0.0",
-  "description": "My custom Svelte SSG window-based website.",
+  "name": "custom-svelte-ssg",
+  "version": "0.0.1",
+  "description": "A dead-simple POC for a custom Svelte SSG.",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",

@@ -55,5 +55,5 @@ routes.forEach( route => {
     // Clean up the .temp SSR directory.
     rimraf.sync(path.resolve(process.cwd(), 'public/.temp'));
 
-    // @TODO: Cleanup the temp directories.
+    // @TODO: (Nice to have) Cleanup the temp directories.
 });

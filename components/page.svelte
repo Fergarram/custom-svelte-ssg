@@ -1,5 +1,5 @@
 <script>
-    export let name;
+    export let route;
     let child;
 
     async function loadComponent() {
@@ -13,7 +13,7 @@
     }
 </style>
 
-<h1>Hello {name}!</h1>
+<h1>Hello {route}!</h1>
 <button on:click={loadComponent}>Load component</button>
 
 {#if child}

@@ -1,15 +1,13 @@
 import svelte from 'rollup-plugin-svelte';
 import resolve from 'rollup-plugin-node-resolve';
 import execute from 'rollup-plugin-execute';
+import { terser } from "rollup-plugin-terser";
 
 const production = !process.env.ROLLUP_WATCH;
 
-// @TODO: Somewhere in this file I need to read a file containing the slugs
-//        for which I'll generate the corresponding html files.
-
 // Static File Generation Configuration
 const ClientBundleConfig = {
-	input: 'source/client.js',
+	input: 'build/client.js',
 	output: {
 		sourcemap: true,
 		format: 'es',
@@ -25,19 +23,19 @@ const ClientBundleConfig = {
 			browser: true,
 			dedupe: importee =>
 				importee === 'svelte' || importee.startsWith('svelte/')
-		})
+		}),
+		terser()
 	]
 };
 
 const PrerendingConfig = {
-	input: 'components/layout.svelte',
+	input: 'components/page.svelte',
 	output: {
 		format: 'cjs',
 		file: 'public/.temp/ssr.js'
 	},
 	plugins: [
 		svelte({
-			// enable run-time checks when not in production
 			dev: !production,
 			generate: 'ssr'
 		}),
@@ -46,7 +44,7 @@ const PrerendingConfig = {
 			dedupe: importee =>
 				importee === 'svelte' || importee.startsWith('svelte/')
 		}),
-		execute('node source/prerenderer.js')
+		execute('node build/server.js')
   ]
 };
 

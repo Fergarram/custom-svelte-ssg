@@ -1,0 +1,22 @@
+@import '../styles/variables.scss';
+
+:global(*) {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	user-select: none;
+}
+
+:global(body) {
+	font-family: $font-sans;
+	height: 100vh;
+	overflow: hidden;
+}
+
+:global(p) {
+	margin-bottom: 1rem;
+}
+
+:global(img) {
+	max-width: 100%;
+}

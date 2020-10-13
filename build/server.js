@@ -3,18 +3,14 @@ const path = require('path');
 const rimraf = require('rimraf');
 
 // This file comes from the SSR Svelte component.
-const page = require('../public/.temp/ssr.js');
+const page = require('../dist/.temp/ssr.js');
 
-// Page Routes
-let routes = [
-    'index', // In client.js, I pass 'index' when the pathname is '/'.
-    'about',
-    'work',
-    'contact',
-    'blog',
-    'blog/creating-a-kaios-game',
-    'blog/some-other-slug'
-];
+// Get the cards to generate the routes.
+const cardRoutes = require('../scripts/data.js').cards.map(card => card.route);
+
+// In client.js, I pass 'index' when the pathname is '/'.
+let routes = [ 'index', ...cardRoutes ];
+
 
 for (let i = 0; i < routes.length; i++) {
     // Do we already have this route?
@@ -32,7 +28,7 @@ routes.forEach( route => {
 
     // Create directory if needed
     if (slugs.length > 1) {
-        const dir = `public/${slugs[0]}`;
+        const dir = `dist/${slugs[0]}`;
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
@@ -49,11 +45,11 @@ routes.forEach( route => {
     template = template.replace('%scripts%', `<script type="module" src="${importPrefix}dist/client.js"></script>`)
 
     // Saving into a file.
-    const htmlFile = path.resolve(process.cwd(), `public/${route}.html`);
+    const htmlFile = path.resolve(process.cwd(), `dist/${route}.html`);
     fs.writeFileSync(htmlFile, template);
 
     // Clean up the .temp SSR directory.
-    rimraf.sync(path.resolve(process.cwd(), 'public/.temp'));
+    rimraf.sync(path.resolve(process.cwd(), 'dist/.temp'));
 
     // @TODO: (Nice to have) Cleanup the temp directories.
 });

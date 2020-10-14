@@ -1,0 +1,50 @@
+[
+    {
+        "route": "about",
+        "title": "About Fernando",
+        "x": 100,
+        "y": 100,
+        "width": 300,
+        "height": 250
+    },
+    {
+        "route": "blog",
+        "title": "Recent Articles",
+        "x": 200,
+        "y": 140,
+        "width": 500,
+        "height": 400
+    },
+    {
+        "route": "blog/some-other-slug",
+        "title": "Recent Articles",
+        "x": 210,
+        "y": 150,
+        "width": 500,
+        "height": 600
+    },
+    {
+        "route": "work",
+        "title": "Work",
+        "x": 200,
+        "y": 140,
+        "width": 240,
+        "height": 240
+    },
+    {
+        "route": "contact",
+        "title": "Contact Fernando",
+        "x": 200,
+        "y": 140,
+        "width": 240,
+        "height": 240
+    },
+    {
+        "route": "error",
+        "title": "404 Not Found",
+        "x": 200,
+        "y": 140,
+        "width": 240,
+        "height": 240
+    }
+]

@@ -8,6 +8,7 @@
     "start": "serve dist"
   },
   "devDependencies": {
+    "ncp": "^2.0.0",
     "node-sass": "^4.14.1",
     "rimraf": "^3.0.0",
     "rollup": "^1.12.0",

@@ -6,7 +6,6 @@ import sveltePreprocess from 'svelte-preprocess';
 
 const production = !process.env.ROLLUP_WATCH;
 
-// Static File Generation Configuration
 const ClientBundleConfig = {
 	input: 'build/client.js',
 	output: {
@@ -34,7 +33,7 @@ const PrerendingConfig = {
 	input: 'components/page.svelte',
 	output: {
 		format: 'cjs',
-		file: 'dist/.temp/ssr.js'
+		file: '.temp/ssr.js'
 	},
 	plugins: [
 		svelte({
@@ -51,4 +50,6 @@ const PrerendingConfig = {
   ]
 };
 
-export default [ ClientBundleConfig, PrerendingConfig ];
+// NOTE: It is importantto keep this array order for the server to work correctly!
+//       Otherwise, the server.js script will delete the generated client-side code!
+export default [ PrerendingConfig, ClientBundleConfig ];

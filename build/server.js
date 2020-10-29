@@ -5,17 +5,17 @@ const ncp = require('ncp').ncp;
 
 // Clean up and prepare 'dist' directory before generating pages.
 rimraf.sync( path.resolve(process.cwd(), 'dist') );
-ncp(path.resolve(process.cwd(), 'public'), path.resolve(process.cwd(), 'dist'), (err) => {
-    // Stop in case something went wrong with copying the public folder
+ncp(path.resolve(process.cwd(), 'static'), path.resolve(process.cwd(), 'dist'), (err) => {
+    // Stop in case something went wrong with copying the static folder
     if (err) {
         throw new Error(err);
     }
 
     // This file comes from the SSR Svelte component.
-    const page = require('../.temp/ssr.js');
+    const page = require('../.temp/page.js');
 
     // Get the cards to generate the routes.
-    const cardRoutes = require('../cards.json').map(card => card.route);
+    const cardRoutes = require('../data/cards.json').map(card => card.route);
 
     // In client.js, I pass 'index' when the pathname is '/'.
     let routes = [ 'index', ...cardRoutes ];
@@ -44,14 +44,15 @@ ncp(path.resolve(process.cwd(), 'public'), path.resolve(process.cwd(), 'dist'), 
         }
 
         // Get the template so that we can replace the placeholders with the SSR stuff.
-        const importPrefix = slugs.length > 1 ? '../' : '';
+        const clientScript = slugs.length > 1 ? '../client.js' : 'client.js';
         const templateFile = path.resolve(process.cwd(), 'build/template.html');
         let template = fs.readFileSync(templateFile, 'utf-8');
 
         // Replacing with the SSR code.
         template = template.replace('%head%', head);
-        template = template.replace('%body%', `<style>${css.code}</style>${html}`).trim();
-        template = template.replace('%scripts%', `<script type="module" src="${importPrefix}dist/client.js"></script>`)
+        template = template.replace('%body%', html);
+        template = template.replace('%styles%', `<style>${css.code}</style>`);
+        template = template.replace('%scripts%', `<script type="module" src="${clientScript}"></script>`)
 
         // Saving into a file.
         const htmlFile = path.resolve(process.cwd(), `dist/${route}.html`);

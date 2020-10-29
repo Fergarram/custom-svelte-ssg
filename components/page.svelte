@@ -1,170 +1,84 @@
+<style lang="scss" src="../styles/page.scss"></style>
+
 <script>
-    import { onMount } from 'svelte';
-    import CardManager from './card-manager.svelte';
-    import ArticleCard from './article-card.svelte';
+	import Shortcuts from './shortcuts.svelte';
+	import CardManager from './card-manager.svelte';
+	import ArticleCard from './article-card.svelte';
+	import Cards from '../data/cards.json'
 
-    // export let route;
+	// Adding dynamic props to cards array.
+	const cards = Cards.map(card => ({
+		...card,
+		isVisible: false,
+		close: () => {},
+		component: null
+	}));
 
-    // We take the visible articles and create a search query string
-	// const makeRoute = (basePath) => {
-	// 	const list = articles.filter(article => article.isVisible).map(article => article.id);
-	// 	return list.length > 0 ? `${basePath}?with=${list}` : basePath;
-    // };
+	const shortcutClicked = async (e) => {
+		e.preventDefault();
+		const href = e.currentTarget.getAttribute('href');
+		const label = e.currentTarget.getAttribute('data-label');
+		window.history.replaceState( {} , label, href );
 
-    // This is the main function that dynamically loads an article component based on a name
-	// const openArticleCard = async (name, event, ignoreShortcut=false) => {
-	// 	let basePath, cards;
+		const card = cards.find(c => `/${c.route}` === href);
 
-	// 	// If no name provided, let's use the URL
-	// 	if (!name) {
-	// 		basePath = typeof(route) !== 'undefined' ? route : 'root';
-	// 		cards = window.location.search.replace('?with=', '').split(',');
-	// 	}
+		if (!card) {
+			console.error('No card found for route:', href);
+			return;
+		}
 
-	// 	// Get first shortcut
-	// 	const shortcut = shortcuts.find(shortcut => {
-	// 		return basePath ? shortcut.route.includes(basePath) : shortcut.route.includes(name);
-	// 	});
+		// Otherwise load the component and set it up
+		card.component = (await import(`../cards/${card.componentName}.svelte`)).default;
+		card.isVisible = true;
 
-	// 	// If no shortcut found show 404 and return
-	// 	if (!shortcut && basePath !== 'root' && !ignoreShortcut) {
-	// 		openArticleCard('404', null, true);
-	// 		return;
+		// Setup close callback
+		card.close = () => {
+			card.isVisible = false;
+			cards = cards;
+		};
 
-	// 	// If the base path is 'root' and no windows should be opened
-	// 	} else if (!shortcut && basePath === 'root' && !ignoreShortcut) {
-	// 		return;
-	// 	}
+		// Trigger reactivity
+		cards = cards;
 
-	// 	// Set the name based on basePath if provided
-	// 	if (!name && basePath && !ignoreShortcut) {
-	// 		name = shortcut.route.replace('/', '');
-	// 	}
+		// Focus on the new card once it is open
+		console.log(card.route)
+		setTimeout(() => document.getElementById(card.route).focus(), 0);
+	};
 
-	// 	// Let's open more cards when provided
-	// 	if (cards && cards.length > 0) {
-	// 		cards.forEach(card => {
-	// 			if (card) openArticleCard(card, null, true);
-	// 		});
-	// 	}
-
-	// 	// Get corresponding article
-	// 	const article = articles.find(article => article.id === name || article.title === name);
-	// 	if (!article) {
-	// 		return;
-	// 	}
-
-	// 	// Add visible cards to route if needed
-	// 	if (event && !ignoreShortcut) {
-	// 		event.currentTarget.setAttribute('href', makeRoute(shortcut.route));
-	// 	}
-
-	// 	// Check if card is already loaded
-	// 	if (article.component) {
-
-	// 		// Focus on it if it is open
-	// 		if (article.isVisible) {
-	// 			setTimeout(() => document.getElementById(article.id).focus(), 0);
-	// 			return;
-
-	// 		// Else we need to show it
-	// 		} else {
-	// 			article.isVisible = true;
-	// 			articles = articles;
-	// 			setTimeout(() => document.getElementById(article.id).focus(), 0);
-	// 			return;
-	// 		}
-	// 	}
-
-	// 	// Otherwise load the component and set it up
-	// 	article.component = (await import(`../articles/${article.id}`)).default;
-	// 	article.isVisible = true;
-
-	// 	// Setup close callback
-	// 	article.close = () => {
-	// 		article.isVisible = false;
-	// 		articles = articles;
-	// 	};
-
-	// 	// Trigger reactivity
-	// 	articles = articles;
-
-	// 	// Focus on the new card once it is open
-	// 	setTimeout(() => document.getElementById(article.id).focus(), 0);
-	// };
-
-	// onMount(() => openArticleCard());
+    export let route;
 </script>
+
+<svelte:head>
+	<title>Fernando's Awesome Website</title>
+</svelte:head>
 
 <main>
 	<h1>Fernando's Awesome Website</h1>
 
-	<nav id="main-navigation">
-		<!-- <CardManager>
-			{#each shortcuts as shortcut, i}
-				<IconCard
-					x={shortcut.x} y={shortcut.y}
-					route={shortcut.route}
-					icon={shortcut.icon}
-					label={shortcut.label}
-					click={openArticleCard}  />
-			{/each}
-		</CardManager> -->
-	</nav>
+	<Shortcuts click={shortcutClicked} />
 
-	<!-- <CardManager>
-		{#each articles as article, i}
-			{#if (article.component !== null && article.isVisible)}
+	<CardManager>
+		{#each cards as card, i}
+			{#if (card.component !== null && card.isVisible)}
 				<ArticleCard
-					domId={article.id}
-					x={article.x}
-					y={article.y}
-					width={article.width}
-					height={article.height}
-					title={article.title}
-					close={article.close}
+					domId={card.route}
+					x={card.x}
+					y={card.y}
+					width={card.width}
+					height={card.height}
+					title={`${route} / ${card.title}`}
+					resizable={card.resizable}
+					close={card.close}
 				>
 					<svelte:component
-						this={article.component}
-						on:openArticleCard={ ({ detail }) => {
-							openArticleCard(detail.name, detail.event);
-						}}
+						this={card.component}
 					/>
 				</ArticleCard>
 			{/if}
 		{/each}
-	</CardManager> -->
+	</CardManager>
 </main>
 
 <footer>
 	Copyright © Fernando Garcia. All rights reserved.
 </footer>
-
-<style lang="scss">
-    @import '../styles/reset.scss';
-	@import '../styles/variables.scss';
-
-	:global(body) {
-		background-color: #0050A0;
-		background-image: url(../assets/yo.jpeg);
-		background-repeat: no-repeat;
-		background-position: center;
-	}
-
-	h1, footer {
-		position: absolute;
-		bottom: 2px;
-		font-weight: normal;
-		font-family: $font-frank;
-		font-size: 12px;
-		color: white;
-	}
-
-	h1 {
-		left: 4px;
-	}
-
-	footer {
-		right: 4px;
-	}
-</style>

@@ -1,6 +1,8 @@
 import svelte from 'rollup-plugin-svelte';
 import resolve from 'rollup-plugin-node-resolve';
+import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import execute from 'rollup-plugin-execute';
+import json from '@rollup/plugin-json';
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from 'svelte-preprocess';
 
@@ -17,6 +19,9 @@ const ClientBundleConfig = {
 	plugins: [
 		svelte({
 			dev: !production,
+			css: function (css) {
+				css.write('dist/styles.css');
+			},
 			hydratable: true,
 			preprocess: sveltePreprocess()
 		}),
@@ -25,6 +30,8 @@ const ClientBundleConfig = {
 			dedupe: importee =>
 				importee === 'svelte' || importee.startsWith('svelte/')
 		}),
+		dynamicImportVars(),
+		json(),
 		terser()
 	]
 };
@@ -33,7 +40,7 @@ const PrerendingConfig = {
 	input: 'components/page.svelte',
 	output: {
 		format: 'cjs',
-		file: '.temp/ssr.js'
+		dir: '.temp'
 	},
 	plugins: [
 		svelte({
@@ -46,6 +53,8 @@ const PrerendingConfig = {
 			dedupe: importee =>
 				importee === 'svelte' || importee.startsWith('svelte/')
 		}),
+		json(),
+		dynamicImportVars(),
 		execute('node build/server.js')
   ]
 };

@@ -8,6 +8,9 @@
     "start": "serve dist"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^16.0.0",
+    "@rollup/plugin-dynamic-import-vars": "^1.1.0",
+    "@rollup/plugin-json": "^4.1.0",
     "ncp": "^2.0.0",
     "node-sass": "^4.14.1",
     "rimraf": "^3.0.0",

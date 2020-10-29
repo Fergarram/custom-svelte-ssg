@@ -18,7 +18,7 @@
     let cardId = makeid(8);
     let handleCardDrag;
     let isDragging = false;
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    let xPos = 0, yPos = 0, deltaX = 0, deltaY = 0;
     const { addCard, moveCard, addListener, removeListener, getStack } = getContext('cardStack');
 
     const setPointerEventsFor = (element, option) => {
@@ -26,26 +26,26 @@
     };
 
     const dragMouseDown = (e) => {
-        pos3 = e.clientX;
-        pos4 = e.clientY;
+        deltaX = e.clientX;
+        deltaY = e.clientY;
         let isDraggable = e.target.getAttribute('draggable');
         isDraggable = isDraggable === 'false' ? false : isDraggable !== null;
         moveCard(cardId);
 
         document.onmousemove = (e) => {
             if (isDraggable) {
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
+                xPos = deltaX - e.clientX;
+                yPos = deltaY - e.clientY;
+                deltaX = e.clientX;
+                deltaY = e.clientY;
                 let rect = card.getBoundingClientRect();
-                card.style.transform = `translate3d(${(rect.left - pos1)}px, ${(rect.top - pos2)}px, 0)`;
+                card.style.transform = `translate3d(${(rect.left - xPos)}px, ${(rect.top - yPos)}px, 0)`;
                 isDragging = true;
                 setPointerEventsFor(card, 'none');
             }
         }
 
-        document.onmouseup = (e) => {
+        document.onmouseup = () => {
             isDragging = false;
             setPointerEventsFor(card, 'initial');
             document.onmousemove = null;
